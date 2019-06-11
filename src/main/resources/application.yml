@@ -1,0 +1,22 @@
+server:
+  port: 9002
+spring:
+  profiles:
+    #当前环境
+    active: dev
+  thymeleaf:
+    prefix: classpath:/templates/
+    cache: false
+
+pagehelper:
+  helperDialect: oracle
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+mybatis:
+  type-aliases-package: cn.com.thtf.model
+  mapper-locations: 'classpath:mappers/*.xml'
+  configuration:
+    map-underscore-to-camel-case: true
+

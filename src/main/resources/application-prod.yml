@@ -1,0 +1,86 @@
+
+#生成配置
+server:
+  port: 8906
+  servlet:
+    context-path: /ocean
+
+################################# mybatis 配置  ################################
+pagehelper:
+  helperDialect: oracle
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+mybatis:
+  type-aliases-package: cn.com.thtf.thirdparty.entity
+  mapper-locations: 'classpath*:cn/com/thtf/thirdparty/mapper/*.xml'
+
+mapper:
+  mappers:
+  not-empty: false
+  identity: ORACLE
+
+
+spring:
+  jta:
+    atomikos:
+      connectionfactory:
+        ignore-session-transacted-flag:
+  redis:
+    #数据库索引
+    database: 0
+    host: 10.10.50.205
+    port: 6379
+    password:
+    jedis:
+      pool:
+        #最大连接数
+        max-active: 100
+        #最大阻塞等待时间(负数表示没限制)
+        max-wait: 2000
+        #最大空闲
+        max-idle: 500
+        #最小空闲
+        min-idle: 8
+    #连接超时时间
+    timeout: 5000
+
+
+#################################### 事物拦截路径表达式 ####################################
+#transaction:
+#  expression: execution(* cn.com.thtf.midlinebureau.service..*.*(..))
+#  enable: true      #是否启动事物配置
+
+#################################### 数据源连接信息配置 ####################################
+spring.datasource: 
+  driver-class-name: oracle.jdbc.driver.OracleDriver
+  url: 'jdbc:oracle:thin:@//10.10.50.205:1521/cdb1'
+  username: c##jianzai
+  password: 1qaz1qaz
+  initialSize: 10
+  max-active: 100
+  max-idle: 30
+  min-idle: 1
+  max-wait: 10000
+  test-while-idle: true
+  test-on-borrow: true
+  test-on-return: true
+  validation-query: SELECT 1
+  validation-interval: 30000
+  remove-abandoned: true
+  remove-abandoned-timeout: 60
+  log-abandoned: true
+
+#日志级别
+logging:
+  level:
+    cn.com.thtf.thirdparty.mapper: info
+
+# 密钥过期时间,单位：秒
+secret:
+  timeout: 300
+
+# token过期时间,单位：分钟
+token:
+  timeout: 5
