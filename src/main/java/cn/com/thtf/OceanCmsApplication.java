@@ -18,16 +18,12 @@ import java.util.Date;
 
 @SpringBootApplication
 @EnableCasClient//开启cas
-@MapperScan(basePackages = "cn.com.thtf.dao")
+@MapperScan(basePackages = "cn.com.thtf.mapper")
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
-@EnableScheduling
 public class OceanCmsApplication {
-
-    private static Logger log = LoggerFactory.getLogger(OceanCmsApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(OceanCmsApplication.class, args);
     }
-
 }

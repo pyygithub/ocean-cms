@@ -1,5 +1,6 @@
 package cn.com.thtf.web.controller;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.jasig.cas.client.util.URIBuilder;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLEncoder;
 
+@Api(value = "LoginController", description = "CAS登陆控制器")
 @RestController
 public class LoginController {
 	

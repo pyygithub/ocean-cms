@@ -1,4 +1,4 @@
-package com.sample;
+package cn.com.thtf.model;
 
 
 public class AdminGroupApplication {

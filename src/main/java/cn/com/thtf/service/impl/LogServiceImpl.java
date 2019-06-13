@@ -1,7 +1,7 @@
 package cn.com.thtf.service.impl;
 
 import cn.com.thtf.common.Constants;
-import cn.com.thtf.dao.LogMapper;
+import cn.com.thtf.mapper.LogMapper;
 import cn.com.thtf.model.Log;
 import cn.com.thtf.service.LogService;
 import cn.com.thtf.utils.*;

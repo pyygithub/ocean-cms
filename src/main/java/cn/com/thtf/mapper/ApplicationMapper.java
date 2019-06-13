@@ -1,4 +1,4 @@
-package cn.com.thtf.dao;
+package cn.com.thtf.mapper;
 
 import cn.com.thtf.model.Application;
 import tk.mybatis.mapper.common.Mapper;
@@ -17,5 +17,5 @@ import java.util.List;
  */
 public interface ApplicationMapper extends Mapper<Application> {
 
-    List<Application> selectByUserGroupId(String userGroupId);
+    List<Application> selectByAdminGroupId(String adminGroupId);
 }

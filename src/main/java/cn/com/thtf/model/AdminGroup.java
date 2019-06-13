@@ -1,22 +1,22 @@
 package cn.com.thtf.model;
 
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Table(name = "HYJZ_ADMIN_GROUP")
 public class AdminGroup {
 
+  @Id
   private String id;
   private String name;
   private String description;
-  private String orderNo;
+  private Integer orderNo;
   private String createUserCode;
   private String createUserName;
   private java.sql.Timestamp createTime;
   private String lastUpdateUserCode;
   private String lastUpdateUserName;
   private java.sql.Timestamp lastUpdateTime;
-  private String deletedFlag;
-
 
   public String getId() {
     return id;
@@ -45,14 +45,13 @@ public class AdminGroup {
   }
 
 
-  public String getOrderNo() {
+  public Integer getOrderNo() {
     return orderNo;
   }
 
-  public void setOrderNo(String orderNo) {
+  public void setOrderNo(Integer orderNo) {
     this.orderNo = orderNo;
   }
-
 
   public String getCreateUserCode() {
     return createUserCode;
@@ -107,13 +106,5 @@ public class AdminGroup {
     this.lastUpdateTime = lastUpdateTime;
   }
 
-
-  public String getDeletedFlag() {
-    return deletedFlag;
-  }
-
-  public void setDeletedFlag(String deletedFlag) {
-    this.deletedFlag = deletedFlag;
-  }
 
 }

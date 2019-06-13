@@ -11,7 +11,7 @@ public class Application {
   private String appName;
   private String imagePath;
   private String link;
-  private String priority;
+  private Integer priority;
   private String typeId;
   private String imageTypePath;
   private String status;
@@ -60,14 +60,13 @@ public class Application {
   }
 
 
-  public String getPriority() {
+  public Integer getPriority() {
     return priority;
   }
 
-  public void setPriority(String priority) {
+  public void setPriority(Integer priority) {
     this.priority = priority;
   }
-
 
   public String getTypeId() {
     return typeId;

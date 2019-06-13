@@ -21,4 +21,7 @@ public interface Constants {
 
     String ENABLE = "1";    //启用
     String DISABLE = "0";   //停用
+
+    String AUTH_LEVEL_BASE = "1";//基础校验
+    String AUTH_LEVEL_STRICT = "2";//严格校验
 }

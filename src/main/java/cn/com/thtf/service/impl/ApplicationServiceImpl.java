@@ -3,24 +3,28 @@ package cn.com.thtf.service.impl;
 import cn.com.thtf.common.Constants;
 import cn.com.thtf.common.exception.CustomException;
 import cn.com.thtf.common.response.ResultCode;
-import cn.com.thtf.dao.ApplicationMapper;
-import cn.com.thtf.dao.UserGroupApplicationMapper;
+import cn.com.thtf.mapper.ApplicationMapper;
+import cn.com.thtf.mapper.TokenMapper;
 import cn.com.thtf.model.Application;
-import cn.com.thtf.model.UserGroupApplication;
+import cn.com.thtf.model.Token;
 import cn.com.thtf.service.ApplicationService;
-import cn.com.thtf.vo.UserGroupApplicationVO;
+import cn.com.thtf.utils.RSAUtil;
+import cn.com.thtf.utils.SnowflakeId;
+import cn.com.thtf.utils.UrlUtil;
+import cn.com.thtf.vo.ApplicationSaveOrUpdateVO;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import tk.mybatis.mapper.entity.Example;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * ========================
@@ -35,91 +39,72 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class ApplicationServiceImpl implements ApplicationService {
-
     private static final Logger log = LoggerFactory.getLogger(ApplicationServiceImpl.class);
 
+    @Value("${cas-server.client-add-url}")
+    private String clientAddUrl;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private TokenMapper tokenMapper;
 
     @Autowired
     private ApplicationMapper applicationMapper;
 
-    @Autowired
-    private UserGroupApplicationMapper userGroupApplicationMapper;
-
     /**
-     * 根据用户分组ID查询应用列表
-     * @author: pyy
-     * @date: 2019/6/10 14:10
-     * @param userGroupId
-     * @return
+     * 系统应用添加
+     * @param applicationSaveOrUpdateVO
      */
     @Override
-    public List<UserGroupApplicationVO> listByUserGroupId(String userGroupId) {
-        //查询所有应用列表
-        Example example = new Example(Application.class);
-        example.createCriteria()
-                .andEqualTo("status", Constants.ENABLE)
-                .andEqualTo("deletedFlag", Constants.UN_DELETED);
-        example.setOrderByClause(" PRIORITY ASC");
-
-        List<Application> allApplicationList = applicationMapper.selectByExample(example);
-        log.info("### 用户分组应用列表查询完毕,全部应用个数:{} ###", allApplicationList.size());
-
-        //根据用户分组ID查询
-        List<Application> userApplicationList = applicationMapper.selectByUserGroupId(userGroupId);
-        log.info("### 用户分组应用列表查询完毕,当前用户分组应用个数:{} ###", userApplicationList.size());
-
-        //过滤数据
-        List<UserGroupApplicationVO> userGroupApplicationVOList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(allApplicationList)) {
-            userGroupApplicationVOList = allApplicationList.stream().map(application -> {
-                UserGroupApplicationVO userGroupApplicationVO = new UserGroupApplicationVO();
-                userGroupApplicationVO.setApplicationId(application.getId());
-                userGroupApplicationVO.setApplicationName(application.getAppName());
-                userGroupApplicationVO.setApplicationPriority(application.getPriority());
-                userGroupApplicationVO.setUserGroupId(userGroupId);
-
-                //初始化选中标记
-                if (!CollectionUtils.isEmpty(userApplicationList) && userApplicationList.contains(application)) {
-                    userGroupApplicationVO.setCheckbox(true);
-                } else {
-                    userGroupApplicationVO.setCheckbox(false);
-                }
-
-                return userGroupApplicationVO;
-            }).collect(Collectors.toList());
+    public void add(ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO) {
+        //分别取出主页地址和注销地址中的IP或域名 + 端口
+        String link = applicationSaveOrUpdateVO.getLink();
+        String logoutUrl = applicationSaveOrUpdateVO.getLogoutUrl();
+        //判断主页地址和注销地址IP和端口是否相同
+        if (!UrlUtil.getIpAndPort(link).equals(UrlUtil.getIpAndPort(logoutUrl))) {
+            log.error("### 主页地址和注销地址IP不一致. link={}, logouUrl={} ###", link, logoutUrl);
+            throw new CustomException(ResultCode.DIFFERENT_IP);
         }
 
-
-        return userGroupApplicationVOList;
-    }
-
-    /**
-     * 修改用户分组的关联应用
-     * @author: pyy
-     * @date: 2019/6/11 9:24
-     * @param userGroupId
-     * @param appIds
-     * @return: void
-     */
-    @Override
-    public void updateUserGroupApplication(String userGroupId, List<String> appIds) {
-        //清空该用户分组下的应用关联信息
-        UserGroupApplication userGroupApplication = new UserGroupApplication();
-        userGroupApplication.setUserGroupId(userGroupId);
-        userGroupApplicationMapper.delete(userGroupApplication);
-        log.info("### 清空该用户分组下的应用关联信息完毕 ###");
-
-        //设置新的应用关联信息
-        if (!CollectionUtils.isEmpty(appIds)) {
-            for (String appId : appIds) {
-                userGroupApplication.setApplicationId(appId);
-                int count = userGroupApplicationMapper.insert(userGroupApplication);
-                if (count != 1) {
-                    log.error("### 添加用户分组和应用关联表数据异常 ###");
-                    throw new CustomException(ResultCode.FAIL);
-                }
-            }
+        //保存应用到CAS Server
+        String ipAndPort = UrlUtil.getIpAndPort(link);
+        JSONObject jsonObject = restTemplate.postForObject(clientAddUrl, null, JSONObject.class, ipAndPort, logoutUrl);
+        if (jsonObject == null || jsonObject.getInteger("code") != 200) {
+            log.error("### 注册CAS client 错误 ###");
+            throw new CustomException(ResultCode.FAIL);
         }
-        log.info("### 用户分组和应用关联关系更新完毕 ###");
+
+        //保存应用
+        Application application = new Application();
+        String applicationId = SnowflakeId.getId() + "";
+        application.setId(applicationId);
+        BeanUtils.copyProperties(applicationSaveOrUpdateVO, application);
+        application.setStatus(Constants.DISABLE);
+        application.setCreateUserCode(applicationSaveOrUpdateVO.getUserId());
+        application.setCreateUserName(applicationSaveOrUpdateVO.getUsername());
+        application.setCreateTime(new Timestamp(new Date().getTime()));
+        application.setDeletedFlag(Constants.UN_DELETED);
+        int appCount = applicationMapper.insert(application);
+        if (appCount != 1) {
+            log.error("### 保存应用错误 ###");
+            throw new CustomException(ResultCode.FAIL);
+        }
+
+        //保存应用到第三方系统：存储应用IP和秘钥信息
+        Token token = new Token();
+        token.setId(SnowflakeId.getId() + "");
+        token.setIp(UrlUtil.getIp(link));
+        token.setApplicationId(applicationId);
+        token.setPublicKey(RSAUtil.getPublicKey());
+        token.setPrivateKey(RSAUtil.getPrivateKey());
+        token.setAuthLevel(applicationSaveOrUpdateVO.getAuthLevel() == null ? Constants.AUTH_LEVEL_BASE : applicationSaveOrUpdateVO.getAuthLevel());
+        int tokenCount = tokenMapper.insert(token);
+        if (tokenCount != 1) {
+            log.error("### 保存应用到第三方系统错误 ###");
+            throw new CustomException(ResultCode.FAIL);
+        }
     }
+
 }

@@ -14,8 +14,8 @@ import javax.validation.constraints.NotBlank;
  * Version: v1.0
  * ========================
  */
-@ApiModel(value = "UserGroupListVO",description = "用户应用分组列表VO类")
-public class UserGroupListVO {
+@ApiModel(value = "AdminGroupListVO",description = "管理员应用分组列表VO类")
+public class AdminGroupListVO {
 
     @ApiModelProperty("分组ID")
     private String id;
@@ -23,9 +23,11 @@ public class UserGroupListVO {
     @ApiModelProperty("分组名称")
     private String name;
 
+    @ApiModelProperty("分组描述")
+    private String description;
 
     @ApiModelProperty("序号")
-    private String orderNo;
+    private Integer orderNo;
 
 
     public String getId() {
@@ -44,11 +46,19 @@ public class UserGroupListVO {
         this.name = name;
     }
 
-    public String getOrderNo() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getOrderNo() {
         return orderNo;
     }
 
-    public void setOrderNo(String orderNo) {
+    public void setOrderNo(Integer orderNo) {
         this.orderNo = orderNo;
     }
 }

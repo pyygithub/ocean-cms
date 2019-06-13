@@ -32,6 +32,7 @@
         <jspparser.version>1.1</jspparser.version>
         <jwt.version>3.0.2</jwt.version>
         <mapper.version>2.0.2</mapper.version>
+        <cas-server.version>5.3.9</cas-server.version>
         <cas-client.version>2.2.0-GA</cas-client.version>
         <tk.mybatis.version>2.0.2</tk.mybatis.version>
         <pagerhelper.version>5.1.2</pagerhelper.version>
@@ -80,12 +81,7 @@
             <artifactId>ojdbc6</artifactId>
             <version>${oracle.version}</version>
         </dependency>
-        <!-- druid -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <version>${druid.version}</version>
-        </dependency>
+
         <!-- jspparser -->
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
@@ -104,13 +100,6 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${swagger.version}</version>
         </dependency>
-        <!-- cas-client -->
-        <dependency>
-            <groupId>net.unicon.cas</groupId>
-            <artifactId>cas-client-autoconfig-support</artifactId>
-            <version>${cas-client.version}</version>
-        </dependency>
-
         <!-- tk.mybatis -->
         <dependency>
             <groupId>tk.mybatis</groupId>
@@ -164,14 +153,18 @@
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>1.5.21</version>
-            <scope>compile</scope>
         </dependency>
+        <!-- commons-codec -->
         <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
         </dependency>
-
-
+        <!-- cas-client -->
+        <dependency>
+            <groupId>net.unicon.cas</groupId>
+            <artifactId>cas-client-autoconfig-support</artifactId>
+            <version>${cas-client.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

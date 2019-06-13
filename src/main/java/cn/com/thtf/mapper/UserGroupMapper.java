@@ -1,7 +1,6 @@
-package cn.com.thtf.dao;
+package cn.com.thtf.mapper;
 
 import cn.com.thtf.model.UserGroup;
-import tk.mybatis.mapper.common.BaseMapper;
 import tk.mybatis.mapper.common.Mapper;
 
 /**

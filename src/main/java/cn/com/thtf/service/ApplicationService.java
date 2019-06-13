@@ -1,6 +1,7 @@
 package cn.com.thtf.service;
 
-import cn.com.thtf.vo.UserGroupApplicationVO;
+import cn.com.thtf.vo.AdminGroupApplicationVO;
+import cn.com.thtf.vo.ApplicationSaveOrUpdateVO;
 
 import java.util.List;
 
@@ -16,7 +17,5 @@ import java.util.List;
  */
 public interface ApplicationService {
 
-    List<UserGroupApplicationVO> listByUserGroupId(String userGroupId);
-
-    void updateUserGroupApplication(String userGroupId, List<String> appIds);
+    void add(ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO);
 }

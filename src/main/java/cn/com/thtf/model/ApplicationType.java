@@ -1,11 +1,13 @@
 package cn.com.thtf.model;
 
 
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Table(name = "HYJZ_APPLICATION_TYPE")
 public class ApplicationType {
 
+  @Id
   private String id;
   private String name;
 

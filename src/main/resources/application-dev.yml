@@ -19,7 +19,6 @@ spring:
         min-idle: 8
     #连接超时时间
     timeout: 5000
-
   #数据源连接信息配置
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
@@ -40,7 +39,6 @@ spring:
     remove-abandoned-timeout: 60
     log-abandoned: true
 
-
 #日志级别
 logging:
   level:
@@ -49,21 +47,24 @@ logging:
 
 #cas config
 cas:
-  server-url-prefix: http://10.10.50.217/cas
-  server-login-url: http://10.10.50.217/cas/login
-  client-host-url: http://10.10.50.217:9002
+  server-url-prefix: http://www.leyou.com/cas
+  server-login-url: http://www.leyou.com/cas/login
+  client-host-url: http://www.leyou.com:9002
   validation-type: cas3
-
   authentication-url-patterns: /*
   validation-url-patterns: /*
   use-session: true
   redirect-after-validation: false
 
+#cas client add url
+cas-server:
+  client-add-url: http://www.leyou.com/cas/addClient?ipAndPort={ipAndPort}&logoutUrl={logoutUrl}
+
 login:
   success:
-    path: http://10.10.50.217:9002/v1/log
+    path: http://www.leyou.com:9002/v1/log
   out:
-    path: http://10.10.50.217:9002/login
+    path: http://www.leyou.com:9002/login
 
 ignore-pattern:
   paths: /ocean/message/create

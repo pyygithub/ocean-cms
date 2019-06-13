@@ -12,10 +12,10 @@ import io.swagger.annotations.ApiModelProperty;
  * Version: v1.0
  * ========================
  */
-@ApiModel(value = "UserGroupApplicationVO",description = "用户分组包含应用列表VO类")
-public class UserGroupApplicationVO {
+@ApiModel(value = "AdminGroupApplicationVO",description = "管理员应用分组包含应用列表VO类")
+public class AdminGroupApplicationVO {
     @ApiModelProperty("分组ID")
-    private String userGroupId;
+    private String adminGroupId;
 
     @ApiModelProperty("应用ID")
     private String applicationId;
@@ -24,17 +24,17 @@ public class UserGroupApplicationVO {
     private String applicationName;
 
     @ApiModelProperty("应用优先级")
-    private String applicationPriority;
+    private Integer applicationPriority;
 
     @ApiModelProperty("选中标记")
     private Boolean checkbox;
 
-    public String getUserGroupId() {
-        return userGroupId;
+    public String getAdminGroupId() {
+        return adminGroupId;
     }
 
-    public void setUserGroupId(String userGroupId) {
-        this.userGroupId = userGroupId;
+    public void setAdminGroupId(String adminGroupId) {
+        this.adminGroupId = adminGroupId;
     }
 
     public String getApplicationId() {
@@ -53,11 +53,11 @@ public class UserGroupApplicationVO {
         this.applicationName = applicationName;
     }
 
-    public String getApplicationPriority() {
+    public Integer getApplicationPriority() {
         return applicationPriority;
     }
 
-    public void setApplicationPriority(String applicationPriority) {
+    public void setApplicationPriority(Integer applicationPriority) {
         this.applicationPriority = applicationPriority;
     }
 

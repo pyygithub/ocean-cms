@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cn.com.thtf.dao.ApplicationMapper">
+<mapper namespace="cn.com.thtf.mapper.ApplicationMapper">
 
 
     <!-- 根据用户分组id查询应用列表 pyy-->
-    <select id="selectByUserGroupId" parameterType="string" resultType="cn.com.thtf.model.Application">
+    <select id="selectByAdminGroupId" parameterType="string" resultType="cn.com.thtf.model.Application">
 		SELECT
 			ha.ID,
 			ha.APP_NAME,
@@ -22,12 +22,12 @@
 			ha.LAST_UPDATE_USER_NAME,
 			ha.LAST_UPDATE_TIME
 		FROM
-			HYJZ_APPLICATION ha INNER JOIN HYJZ_USER_GROUP_APPLICATION huga ON ha.ID = huga.APPLICATION_ID
+			HYJZ_APPLICATION ha INNER JOIN HYJZ_ADMIN_GROUP_APPLICATION haga ON ha.ID = huga.APPLICATION_ID
 
 		WHERE
 			ha.STATUS = '1'
 			AND ha.DELETED_FLAG = '0'
-			AND huga.USER_GROUP_ID = #{userGroupId, jdbcType=VARCHAR}
+			AND huga.ADMIN_GROUP_ID = #{adminGroupId, jdbcType=VARCHAR}
 		ORDER BY ha.PRIORITY ASC
 	</select>
 </mapper>
