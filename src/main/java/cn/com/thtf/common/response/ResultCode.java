@@ -35,7 +35,7 @@ public enum ResultCode {
     INVALID_PARAM(40035, "不合法的参数"),
     ILLEGAL_URL(40039, "不合法URL"),
     DIFFERENT_IP(40040, "主页地址和注销地址的IP与端口不一致"),
-
+    IS_EXISTS(40051, "名称已存在"),
     SERVER_ERROR(99999,"抱歉，系统繁忙，请稍后重试！");
 
     //操作代码

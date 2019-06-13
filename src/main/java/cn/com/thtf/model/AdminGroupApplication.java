@@ -1,6 +1,9 @@
 package cn.com.thtf.model;
 
 
+import javax.persistence.Table;
+
+@Table(name = "HYJZ_ADMIN_GROUP_APPLICATION")
 public class AdminGroupApplication {
 
   private String adminGroupId;

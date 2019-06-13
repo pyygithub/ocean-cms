@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -49,7 +51,7 @@ public class AdminGroupController {
             @ApiImplicitParam(name = "adminGroupSaveOrUpdateVO", value = "应用分组新增数据", required = true, dataType = "AdminGroupSaveOrUpdateVO", paramType = "body")
     })
     @PostMapping("/adminGroup")
-    public Result add(@RequestBody @Valid AdminGroupSaveOrUpdateVO adminGroupSaveOrUpdateVO) {
+    public Result add( @Valid @RequestBody AdminGroupSaveOrUpdateVO adminGroupSaveOrUpdateVO) {
         adminGroupService.add(adminGroupSaveOrUpdateVO);
 
         return Result.SUCCESS();
@@ -66,7 +68,8 @@ public class AdminGroupController {
             @ApiImplicitParam(name = "adminGroupSaveOrUpdateVO", value = "应用分组修改数据", required = true, dataType = "AdminGroupSaveOrUpdateVO", paramType = "body")
     })
     @PutMapping("/adminGroup/{adminGroupId}")
-    public Result update(@PathVariable("adminGroupId") String adminGroupId, @RequestBody @Valid AdminGroupSaveOrUpdateVO adminGroupSaveOrUpdateVO) {
+    public Result update(@Valid @NotBlank(message = "分组ID不能为空") @PathVariable("adminGroupId") String adminGroupId,
+                         @RequestBody AdminGroupSaveOrUpdateVO adminGroupSaveOrUpdateVO) {
         adminGroupService.update(adminGroupId, adminGroupSaveOrUpdateVO);
 
         return Result.SUCCESS();
@@ -74,33 +77,29 @@ public class AdminGroupController {
 
     /**
      * 根据ID删除管理员应用分组
-     * @param id
+     * @param adminGroupId
      * @return
      */
     @Log(businessCode = "1", operationDesc = "管理员应用分组删除")
     @ApiOperation(value = "管理员应用分组删除", notes = "管理员应用分组删除接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "应用分组ID", required = true, dataType = "String", paramType = "path")
+            @ApiImplicitParam(name = "adminGroupId", value = "应用分组ID", required = true, dataType = "String", paramType = "path")
     })
-    @DeleteMapping("/adminGroup/{id}")
-    public Result del(@PathVariable("id") String id) {
-        adminGroupService.delete(id);
+    @DeleteMapping("/adminGroup/{adminGroupId}")
+    public Result del(@Valid @NotBlank(message = "分组ID不能为空") @PathVariable("adminGroupId") String adminGroupId) {
+        adminGroupService.delete(adminGroupId);
 
         return Result.SUCCESS();
     }
 
     /**
      * 查询管理员应用分组列表
-     * @param adminId
      * @return
      */
     @ApiOperation(value = "查询管理员应用分组列表", notes = "根据管理员ID查询应用分组列表查询接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "adminId", value = "管理员ID", required = true, dataType = "String", paramType = "query")
-    })
     @GetMapping("/adminGroups")
-    public Result list(@RequestParam("adminId") String adminId) {
-        List<AdminGroupListVO> adminGroupVOList = adminGroupService.list(adminId);
+    public Result list() {
+        List<AdminGroupListVO> adminGroupVOList = adminGroupService.list();
 
         return Result.SUCCESS(adminGroupVOList);
     }
@@ -117,7 +116,8 @@ public class AdminGroupController {
             @ApiImplicitParam(name = "type", value = "操作类型：1=上移 2=下移 3=置顶 4=置底", required = true, dataType = "String", paramType = "path")
     })
     @PutMapping("/moveOrder/{adminGroupId}/{type}")
-    public Result moveOrder(@PathVariable("adminGroupId") String adminGroupId, @PathVariable("type") String type) {
+    public Result moveOrder(@Valid @NotBlank(message = "分组ID不能为空") @PathVariable("adminGroupId") String adminGroupId,
+                            @NotBlank(message = "操作类型不能为空") @PathVariable("type") String type) {
         adminGroupService.moveOrder(adminGroupId, type);
 
         return Result.SUCCESS();
@@ -133,7 +133,7 @@ public class AdminGroupController {
             @ApiImplicitParam(name = "adminGroupId", value = "管理员应用分组ID", required = true, dataType = "String", paramType = "path")
     })
     @GetMapping("/adminGroup/{adminGroupId}/applications")
-    public Result listByUserGroupId(@PathVariable("adminGroupId") String adminGroupId) {
+    public Result listByUserGroupId(@Valid @NotBlank(message = "分组ID不能为空") @PathVariable("adminGroupId") String adminGroupId) {
         List<AdminGroupApplicationVO> adminGroupApplicationVOList = adminGroupService.listByAdminGroupId(adminGroupId);
 
         return Result.SUCCESS(adminGroupApplicationVOList);
@@ -151,7 +151,8 @@ public class AdminGroupController {
             @ApiImplicitParam(name = "appIds", value = "选中应用ID集合", required = true, dataType = "List", paramType = "body")
     })
     @PutMapping("/adminGroup/{adminGroupId}/applications")
-    public Result updateUserGroupApplication(@PathVariable("adminGroupId") String adminGroupId, @RequestBody List<String> appIds) {
+    public Result updateUserGroupApplication(@Valid @NotBlank(message = "管理应用分组ID不能为空") @PathVariable("adminGroupId") String adminGroupId,
+                                             @NotEmpty(message = "选中应用ID集合不能为空") @RequestBody List<String> appIds) {
         adminGroupService.updateAdminGroupApplication(adminGroupId, appIds);
 
         return Result.SUCCESS();

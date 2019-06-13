@@ -5,12 +5,14 @@ import cn.com.thtf.mapper.AdminGroupApplicationMapper;
 import cn.com.thtf.mapper.AdminGroupMapper;
 import cn.com.thtf.common.exception.CustomException;
 import cn.com.thtf.mapper.ApplicationMapper;
+import cn.com.thtf.model.Admin;
 import cn.com.thtf.model.AdminGroup;
 import cn.com.thtf.model.AdminGroupApplication;
 import cn.com.thtf.model.Application;
 import cn.com.thtf.service.AdminGroupService;
 import cn.com.thtf.utils.SnowflakeId;
 import cn.com.thtf.utils.StringUtils;
+import cn.com.thtf.utils.UserUtil;
 import cn.com.thtf.vo.AdminGroupApplicationVO;
 import cn.com.thtf.vo.AdminGroupListVO;
 import cn.com.thtf.vo.AdminGroupSaveOrUpdateVO;
@@ -26,9 +28,7 @@ import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -64,19 +64,26 @@ public class AdminGroupServiceImpl implements AdminGroupService {
      */
     @Override
     public void add(AdminGroupSaveOrUpdateVO adminGroupSaveOrUpdateVO) {
+        //验证分组名称是否已存在
+        boolean isExists = isExistsByGroupName(adminGroupSaveOrUpdateVO.getName());
+        if (isExists) {
+            throw new CustomException(ResultCode.IS_EXISTS);
+        }
+
         //初始化AdminGroup实体类
         AdminGroup adminGroup = new AdminGroup();
 
         //复制VO属性值到adminGroup
         BeanUtils.copyProperties(adminGroupSaveOrUpdateVO, adminGroup);
         adminGroup.setId(SnowflakeId.getId() + "");
-        adminGroup.setCreateUserCode(adminGroupSaveOrUpdateVO.getUserId());
-        adminGroup.setCreateUserName(adminGroupSaveOrUpdateVO.getUsername());
+        adminGroup.setOwnerCode(UserUtil.getUserId());
+        adminGroup.setCreateUserCode(UserUtil.getUserId());
+        adminGroup.setCreateUserName(UserUtil.getUsername());
         adminGroup.setCreateTime(new Timestamp(new Date().getTime()));
 
         //查询当前用户分组序号最大值
         Example example = new Example(AdminGroup.class);
-        example.createCriteria().andEqualTo("createUserCode", adminGroupSaveOrUpdateVO.getUserId());
+        example.createCriteria().andEqualTo("ownerCode", UserUtil.getUserId());
         //排序
         example.setOrderByClause(" ORDER_NO DESC");
         //执行查询
@@ -116,10 +123,19 @@ public class AdminGroupServiceImpl implements AdminGroupService {
             throw new CustomException(ResultCode.FAIL);
         }
 
+        //如果分组名称被修改-执行重复校验
+        if (!adminGroupOld.getName().equals(adminGroupSaveOrUpdateVO.getName())) {
+            //验证分组名称是否已存在
+            boolean isExists = isExistsByGroupName(adminGroupSaveOrUpdateVO.getName());
+            if (isExists) {
+                throw new CustomException(ResultCode.IS_EXISTS);
+            }
+        }
+
         //页面传输的参数覆盖数据库属性值
         BeanUtils.copyProperties(adminGroupSaveOrUpdateVO, adminGroupOld);
-        adminGroupOld.setLastUpdateUserCode(adminGroupSaveOrUpdateVO.getUserId());
-        adminGroupOld.setLastUpdateUserName(adminGroupSaveOrUpdateVO.getUsername());
+        adminGroupOld.setLastUpdateUserCode(UserUtil.getUserId());
+        adminGroupOld.setLastUpdateUserName(UserUtil.getUsername());
         adminGroupOld.setLastUpdateTime(new Timestamp(new Date().getTime()));
 
         //执行修改
@@ -136,11 +152,6 @@ public class AdminGroupServiceImpl implements AdminGroupService {
      */
     @Override
     public void delete(String id) {
-        if (StringUtils.isBlank(id)) {
-            log.error("### 分组ID不能为空 ###");
-            throw new CustomException(ResultCode.INVALID_PARAM);
-        }
-
         //判断该分组下是否存在应用
         Example example = new Example(AdminGroupApplication.class);
         example.createCriteria().andEqualTo("adminGroupId", id);
@@ -162,20 +173,12 @@ public class AdminGroupServiceImpl implements AdminGroupService {
 
     /**
      * 查询管理员应用分组列表
-     * @param adminId
      * @return
      */
     @Override
-    public List<AdminGroupListVO> list(String adminId) {
-        if (StringUtils.isBlank(adminId)) {
-            log.error("### 用户ID不能为空 ###");
-            throw new CustomException(ResultCode.INVALID_PARAM);
-        }
-
+    public List<AdminGroupListVO> list() {
         //根据用户ID查询应用分组列表信息
         Example example = new Example(AdminGroup.class);
-        //查询条件
-        example.createCriteria().andEqualTo("createUserCode", adminId);
         //排序
         example.setOrderByClause(" ORDER_NO ASC");
         //执行查询
@@ -273,17 +276,6 @@ public class AdminGroupServiceImpl implements AdminGroupService {
      */
     @Override
     public void moveOrder(String adminGroupId, String type) {
-
-        //参数校验
-        if (StringUtils.isBlank(adminGroupId)) {
-            log.error("### 用户分组ID不能为空 ###");
-            throw new CustomException(ResultCode.INVALID_PARAM);
-        }
-        if (StringUtils.isBlank(type)) {
-            log.error("### 排序操作类型不能为空 ###");
-            throw new CustomException(ResultCode.INVALID_PARAM);
-        }
-
         //查询当前要移动的分组对象
         AdminGroup currGroup = adminGroupMapper.selectByPrimaryKey(adminGroupId);
         if (currGroup == null) {
@@ -438,7 +430,26 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         log.info("### 分组上移成功，当前分组排序号:orderNo={} ###", currGroup.getOrderNo());
     }
 
+    /**
+     * 校验分组名称是否已存在
+     * @param adminGroupName
+     * @return
+     */
+    private boolean isExistsByGroupName(String adminGroupName) {
+        Example example = new Example(AdminGroup.class);
+        example.createCriteria()
+                .andEqualTo("name", adminGroupName);
+        int count = adminGroupMapper.selectCountByExample(example);
 
+        Map<String, Object> result = new HashMap<>();
+
+        if (count > 0) {
+            log.info("### 校验分组名称是否已存在：当前分组名称已存在, adminGroupName={} ###", adminGroupName);
+            return true;//已存在
+        } else {
+            return false;//不存在
+        }
+    }
 }
 
 

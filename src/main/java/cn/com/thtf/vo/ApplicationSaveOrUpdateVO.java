@@ -22,6 +22,14 @@ public class ApplicationSaveOrUpdateVO {
     @ApiModelProperty("应用名称")
     private String appName;
 
+    @NotBlank(message = "管理员应用分组ID不能为空")
+    @ApiModelProperty("管理员应用分组ID")
+    private String adminGroupId;
+
+    @NotBlank(message = "管理员应用分组名称不能为空")
+    @ApiModelProperty("管理员应用分组名称")
+    private String adminGroupName;
+
     @NotBlank(message = "应用首页图标路径不能为空")
     @ApiModelProperty("应用首页图标路径")
     private String imagePath;
@@ -53,14 +61,6 @@ public class ApplicationSaveOrUpdateVO {
     @ApiModelProperty("校验级别: 1 普通校验 2 严格校验（默认1）")
     private String authLevel;
 
-    @NotBlank(message = "操作人ID不能为空")
-    @ApiModelProperty("操作人ID")
-    private String userId;
-
-    @NotBlank(message = "操作人名称不能为空")
-    @ApiModelProperty("操作人名称")
-    private String username;
-
 
     public String getAppName() {
         return appName;
@@ -68,6 +68,22 @@ public class ApplicationSaveOrUpdateVO {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public String getAdminGroupId() {
+        return adminGroupId;
+    }
+
+    public void setAdminGroupId(String adminGroupId) {
+        this.adminGroupId = adminGroupId;
+    }
+
+    public String getAdminGroupName() {
+        return adminGroupName;
+    }
+
+    public void setAdminGroupName(String adminGroupName) {
+        this.adminGroupName = adminGroupName;
     }
 
     public String getImagePath() {
@@ -132,21 +148,5 @@ public class ApplicationSaveOrUpdateVO {
 
     public void setAuthLevel(String authLevel) {
         this.authLevel = authLevel;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 }

@@ -47,7 +47,7 @@ public class ApplicationController {
             @ApiImplicitParam(name = "applicationSaveOrUpdateVO", value = "应用分组ID", required = true, dataType = "ApplicationSaveOrUpdateVO", paramType = "body")
     })
     @PostMapping("/application")
-    public Result add(@RequestBody @Valid ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO) {
+    public Result add(@Valid @RequestBody ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO) {
         applicationService.add(applicationSaveOrUpdateVO);
 
         return Result.SUCCESS();

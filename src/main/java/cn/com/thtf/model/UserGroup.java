@@ -15,6 +15,7 @@ public class UserGroup {
   private String name;
   private String description;
   private Integer orderNo;
+  private String ownerCode;
   private String createUserCode;
   private String createUserName;
   private java.sql.Timestamp createTime;
@@ -31,7 +32,6 @@ public class UserGroup {
     this.id = id;
   }
 
-
   public String getName() {
     return name;
   }
@@ -39,7 +39,6 @@ public class UserGroup {
   public void setName(String name) {
     this.name = name;
   }
-
 
   public String getDescription() {
     return description;
@@ -49,13 +48,20 @@ public class UserGroup {
     this.description = description;
   }
 
-
   public Integer getOrderNo() {
     return orderNo;
   }
 
   public void setOrderNo(Integer orderNo) {
     this.orderNo = orderNo;
+  }
+
+  public String getOwnerCode() {
+    return ownerCode;
+  }
+
+  public void setOwnerCode(String ownerCode) {
+    this.ownerCode = ownerCode;
   }
 
   public String getCreateUserCode() {

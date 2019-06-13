@@ -24,7 +24,7 @@ public interface AdminGroupService {
 
     void delete(String id);
 
-    List<AdminGroupListVO> list(String userId);
+    List<AdminGroupListVO> list();
 
     void moveOrder(String userGroupId, String type);
 

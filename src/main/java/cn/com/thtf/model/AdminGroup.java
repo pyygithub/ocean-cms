@@ -11,6 +11,7 @@ public class AdminGroup {
   private String name;
   private String description;
   private Integer orderNo;
+  private String ownerCode;
   private String createUserCode;
   private String createUserName;
   private java.sql.Timestamp createTime;
@@ -35,7 +36,6 @@ public class AdminGroup {
     this.name = name;
   }
 
-
   public String getDescription() {
     return description;
   }
@@ -44,13 +44,20 @@ public class AdminGroup {
     this.description = description;
   }
 
-
   public Integer getOrderNo() {
     return orderNo;
   }
 
   public void setOrderNo(Integer orderNo) {
     this.orderNo = orderNo;
+  }
+
+  public String getOwnerCode() {
+    return ownerCode;
+  }
+
+  public void setOwnerCode(String ownerCode) {
+    this.ownerCode = ownerCode;
   }
 
   public String getCreateUserCode() {
