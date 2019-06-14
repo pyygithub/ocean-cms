@@ -44,7 +44,7 @@ public class ApplicationController {
      */
     @ApiOperation(value = "系统应用添加", notes = "系统应用添加接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "applicationSaveOrUpdateVO", value = "应用分组ID", required = true, dataType = "ApplicationSaveOrUpdateVO", paramType = "body")
+            @ApiImplicitParam(name = "applicationSaveOrUpdateVO", value = "应用分组信息", required = true, dataType = "ApplicationSaveOrUpdateVO", paramType = "body")
     })
     @PostMapping("/application")
     public Result add(@Valid @RequestBody ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO) {

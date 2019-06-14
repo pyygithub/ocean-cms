@@ -9,6 +9,7 @@ import cn.com.thtf.service.ApplicationService;
 import cn.com.thtf.utils.RSAUtil;
 import cn.com.thtf.utils.SnowflakeId;
 import cn.com.thtf.utils.UrlUtil;
+import cn.com.thtf.utils.UserUtil;
 import cn.com.thtf.vo.ApplicationSaveOrUpdateVO;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiImplicitParam;
@@ -91,8 +92,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         //保存应用
         Application application = new Application();
         String applicationId = SnowflakeId.getId() + "";
-        String userId = applicationSaveOrUpdateVO.getUserId();
-        String username = applicationSaveOrUpdateVO.getUsername();
+        String userId = UserUtil.getUserId();
+        String username = UserUtil.getUsername();
 
         application.setId(applicationId);
         BeanUtils.copyProperties(applicationSaveOrUpdateVO, application);
@@ -167,7 +168,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     UserGroup userGroup = new UserGroup();
                     userGroup.setId(SnowflakeId.getId() + "");
                     userGroup.setName(adminGroupName);
-                    userGroup.setDescription("由管理员【】创建,系统同步生成");
+                    userGroup.setDescription("由管理员【" + username + "】创建,系统同步生成");
                     userGroup.setOwnerCode(ownerCode);
                     userGroup.setCreateUserCode(userId);
                     userGroup.setCreateUserName(username);
