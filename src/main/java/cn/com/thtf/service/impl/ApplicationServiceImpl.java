@@ -205,6 +205,72 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     /**
+     * 系统应用修改
+     * @param appId
+     * @param applicationSaveOrUpdateVO
+     */
+    @Override
+    public void update(String appId, ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO) {
+        //分别取出主页地址和注销地址中的IP或域名 + 端口
+        String link = applicationSaveOrUpdateVO.getLink();
+        String logoutUrl = applicationSaveOrUpdateVO.getLogoutUrl();
+        //判断主页地址和注销地址IP和端口是否相同
+        if (!UrlUtil.getIpAndPort(link).equals(UrlUtil.getIpAndPort(logoutUrl))) {
+            log.error("### 系统应用修改：主页地址和注销地址IP不一致. link={}, logouUrl={} ###", link, logoutUrl);
+            throw new CustomException(ResultCode.DIFFERENT_IP);
+        }
+
+        //获取当前登陆用户信息
+        String userId = UserUtil.getUserId();
+        String username = UserUtil.getUsername();
+
+        //修改应用
+        Application application = applicationMapper.selectByPrimaryKey(appId);
+        BeanUtils.copyProperties(applicationSaveOrUpdateVO, application);
+        application.setLastUpdateUserCode(userId);
+        application.setLastUpdateUserName(username);
+        application.setLastUpdateTime(new Timestamp(new Date().getTime()));
+
+        int appCount = applicationMapper.updateByPrimaryKey(application);
+        if (appCount != 1) {
+            log.error("### 系统应用修改：修改应用错误 ###");
+            throw new CustomException(ResultCode.FAIL);
+        }
+        log.info("### 系统应用修改：修改应用成功 ###");
+
+        //修改应用和管理员分组关系
+        String adminGroupId = applicationSaveOrUpdateVO.getAdminGroupId();
+        AdminGroupApplication adminGroupApplication = new AdminGroupApplication();
+        adminGroupApplication.setAdminGroupId(adminGroupId);
+        adminGroupApplication.setApplicationId(appId);
+        Example example = new Example(AdminGroupApplication.class);
+        example.createCriteria().andEqualTo("applicationId", appId);
+        //根据applicationId修改关联关系
+        int groupAppCount = adminGroupApplicationMapper.updateByExample(adminGroupApplication, example);
+        if (groupAppCount != 1) {
+            log.error("### 系统应用修改：修改应用和管理员应用分组关系错误 ###");
+            throw new CustomException(ResultCode.FAIL);
+        }
+        log.info("### 系统应用修改：修改应用和管理员应用分组关系成功 ###");
+
+        //更新应用的第三方系统信息：存储应用IP和秘钥信息
+        Token token = new Token();
+        token.setIp(UrlUtil.getIp(link));
+        token.setPublicKey(RSAUtil.getPublicKey());
+        token.setPrivateKey(RSAUtil.getPrivateKey());
+        token.setAuthLevel(applicationSaveOrUpdateVO.getAuthLevel() == null ? Constants.AUTH_LEVEL_BASE : applicationSaveOrUpdateVO.getAuthLevel());
+        //根据applicationId更新token信息
+        Example tokenExample = new Example(Token.class);
+        tokenExample.createCriteria().andEqualTo("applicationId", appId);
+        int tokenCount = tokenMapper.updateByExampleSelective(token, tokenExample);
+        if (tokenCount != 1) {
+            log.error("### 系统应用修改：更新应用到第三方系统错误 ###");
+            throw new CustomException(ResultCode.FAIL);
+        }
+        log.info("### 系统应用修改：更新应用到第三方系统成功 ###");
+    }
+
+    /**
      * 保存应用和用户应用分组关系
      * @param applicationId
      * @param userGroupId

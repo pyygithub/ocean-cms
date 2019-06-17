@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -53,4 +54,22 @@ public class ApplicationController {
         return Result.SUCCESS();
     }
 
+    /**
+     * 系统应用修改
+     * @param appId
+     * @param applicationSaveOrUpdateVO
+     * @return
+     */
+    @ApiOperation(value = "系统应用修改", notes = "系统应用修改接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "appId", value = "应用Id", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "applicationSaveOrUpdateVO", value = "应用分组信息", required = true, dataType = "ApplicationSaveOrUpdateVO", paramType = "body")
+    })
+    @PutMapping("/application")
+    public Result update(@Valid @NotBlank(message = "应用Id不能为空") @PathVariable("appId") String appId,
+                         @RequestBody ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO) {
+        applicationService.update(appId, applicationSaveOrUpdateVO);
+
+        return Result.SUCCESS();
+    }
 }

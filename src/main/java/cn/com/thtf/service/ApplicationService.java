@@ -18,4 +18,6 @@ import java.util.List;
 public interface ApplicationService {
 
     void add(ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO);
+
+    void update(String appId, ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO);
 }
