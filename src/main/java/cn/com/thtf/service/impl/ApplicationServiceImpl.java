@@ -67,6 +67,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     /**
      * 系统应用添加
+     *
      * @param applicationSaveOrUpdateVO
      */
     @Override
@@ -77,7 +78,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         //判断主页地址和注销地址IP和端口是否相同
         if (!UrlUtil.getIpAndPort(link).equals(UrlUtil.getIpAndPort(logoutUrl))) {
             log.error("### 系统应用添加：主页地址和注销地址IP不一致. link={}, logouUrl={} ###", link, logoutUrl);
-            throw new CustomException(ResultCode.DIFFERENT_IP);
+            throw new CustomException(ResultCode.PARAM_NOT_COMPLETE);
         }
 
         //保存应用到CAS Server
@@ -206,6 +207,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     /**
      * 系统应用修改
+     *
      * @param appId
      * @param applicationSaveOrUpdateVO
      */
@@ -217,7 +219,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         //判断主页地址和注销地址IP和端口是否相同
         if (!UrlUtil.getIpAndPort(link).equals(UrlUtil.getIpAndPort(logoutUrl))) {
             log.error("### 系统应用修改：主页地址和注销地址IP不一致. link={}, logouUrl={} ###", link, logoutUrl);
-            throw new CustomException(ResultCode.DIFFERENT_IP);
+            throw new CustomException(ResultCode.PARAM_NOT_COMPLETE);
         }
 
         //获取当前登陆用户信息
@@ -271,7 +273,37 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     /**
+     * 系统应用状态修改
+     *
+     * @param appId
+     * @param status
+     */
+    @Override
+    public void updateStatus(String appId, String status) {
+        if (!Constants.ENABLE.equals(status) || !Constants.DISABLE.equals(status)) {
+            log.error("### 系统应用状态修改: 状态码不合法  ###");
+            throw new CustomException(ResultCode.PARAM_IS_INVALID);
+        }
+
+        //根据ID查询应用信息
+        Application application = new Application();
+        application.setId(appId);
+        application.setLastUpdateUserName(UserUtil.getUserId());
+        application.setLastUpdateUserName(UserUtil.getUsername());
+        application.setLastUpdateTime(new Timestamp(new Date().getTime()));
+        application.setStatus(status);
+
+        //更新数据库
+        int count = applicationMapper.updateByPrimaryKeySelective(application);
+        if (count != 1) {
+            log.error("### 系统应用状态修改：修改应用状态错误 ###");
+            throw new CustomException(ResultCode.FAIL);
+        }
+    }
+
+    /**
      * 保存应用和用户应用分组关系
+     *
      * @param applicationId
      * @param userGroupId
      */

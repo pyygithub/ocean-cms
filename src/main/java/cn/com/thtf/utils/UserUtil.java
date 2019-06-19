@@ -19,7 +19,7 @@ public class UserUtil {
             Assertion ass = AssertionHolder.getAssertion();
             return (String) ass.getPrincipal().getAttributes().get("id");
         } catch (Exception e) {
-            throw new CustomException(ResultCode.UNVALID);
+            throw new CustomException(ResultCode.PERMISSION_EXPIRE);
         }
     }
 
@@ -32,7 +32,7 @@ public class UserUtil {
             Assertion ass = AssertionHolder.getAssertion();
             return ass.getPrincipal().getName();
         } catch (Exception e) {
-            throw new CustomException(ResultCode.UNVALID);
+            throw new CustomException(ResultCode.PERMISSION_EXPIRE);
         }
     }
 
@@ -45,7 +45,7 @@ public class UserUtil {
             Assertion ass = AssertionHolder.getAssertion();
             return ass.getPrincipal().getAttributes();
         } catch (Exception e) {
-            throw new CustomException(ResultCode.UNVALID);
+            throw new CustomException(ResultCode.PERMISSION_EXPIRE);
         }
     }
 }

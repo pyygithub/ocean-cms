@@ -24,4 +24,7 @@ public interface Constants {
 
     String AUTH_LEVEL_BASE = "1";//基础校验
     String AUTH_LEVEL_STRICT = "2";//严格校验
+
+    String IMAGE_TYPE_THEME = "theme";//主题图片
+    String IMAGE_TYPE_APP = "app";//app图片
 }

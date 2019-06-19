@@ -55,7 +55,7 @@ public class UrlFilter implements  Filter {
 					return;
 				}
 				logger.info("会话失效");
-				Result result = new Result(ResultCode.UNAUTHENTICATED, loginUrl);
+				Result result = new Result(ResultCode.PERMISSION_EXPIRE, loginUrl);
 				response.setContentType("application/json;charset=UTF-8");
 				PrintWriter print = response.getWriter();
 				print.write(JSON.toJSONString(result));

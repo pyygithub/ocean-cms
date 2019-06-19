@@ -65,11 +65,32 @@ public class ApplicationController {
             @ApiImplicitParam(name = "appId", value = "应用Id", required = true, dataType = "String", paramType = "path"),
             @ApiImplicitParam(name = "applicationSaveOrUpdateVO", value = "应用分组信息", required = true, dataType = "ApplicationSaveOrUpdateVO", paramType = "body")
     })
-    @PutMapping("/application")
+    @PutMapping("/application/{appId}")
     public Result update(@Valid @NotBlank(message = "应用Id不能为空") @PathVariable("appId") String appId,
                          @RequestBody ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO) {
         applicationService.update(appId, applicationSaveOrUpdateVO);
 
         return Result.SUCCESS();
     }
+
+    /**
+     * 系统应用状态修改
+     * @param appId
+     * @param status
+     * @return
+     */
+    @ApiOperation(value = "系统应用状态修改", notes = "系统应用状态修改接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "appId", value = "应用Id", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "status", value = "状态1：启用 0：停用", required = true, dataType = "String", paramType = "path")
+    })
+    @PutMapping("/application/{appId}/{status}")
+    public Result update(@Valid @NotBlank(message = "应用Id不能为空") @PathVariable("appId") String appId,
+                         @NotBlank(message = "状态不能为空") @PathVariable("status") String status) {
+        applicationService.updateStatus(appId, status);
+
+        return Result.SUCCESS();
+    }
+
+
 }

@@ -1,5 +1,15 @@
 
 #开发配置
+
+#ftp
+ftp:
+  address: 10.10.50.249
+  port: 21
+  username: ftpuser
+  password: 123456
+  basepath: /data/ftp/pub
+  server-url: http://10.10.50.249:82 #nginx服务器地址
+
 spring:
   redis:
     #数据库索引
@@ -47,9 +57,9 @@ logging:
 
 #cas config
 cas:
-  server-url-prefix: http://www.leyou.com/cas
-  server-login-url: http://www.leyou.com/cas/login
-  client-host-url: http://www.leyou.com:9002
+  server-url-prefix: http://10.10.50.189/cas
+  server-login-url: http://10.10.50.189/cas/login
+  client-host-url: http://localhost:9002
   validation-type: cas3
   authentication-url-patterns: /*
   validation-url-patterns: /*
@@ -62,9 +72,9 @@ cas-server:
 
 login:
   success:
-    path: http://www.leyou.com:9002/v1/log
+    path: http://localhost:9002/v1/log
   out:
-    path: http://www.leyou.com:9002/login
+    path: http://localhost:9002/login
 
 ignore-pattern:
   paths: /ocean/message/create

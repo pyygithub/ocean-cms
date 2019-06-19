@@ -16,7 +16,7 @@ public class SecurityUtils {
         try {
             userDetails = (UserDetails) org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         } catch (Exception e) {
-            throw new CustomException(ResultCode.UNVALID);
+            throw new CustomException(ResultCode.PERMISSION_EXPIRE);
         }
         return userDetails;
     }

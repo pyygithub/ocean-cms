@@ -67,7 +67,7 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         //验证分组名称是否已存在
         boolean isExists = isExistsByGroupName(adminGroupSaveOrUpdateVO.getName());
         if (isExists) {
-            throw new CustomException(ResultCode.IS_EXISTS);
+            throw new CustomException(ResultCode.BUSINESS_NAME_EXISTED);
         }
 
         //初始化AdminGroup实体类
@@ -128,7 +128,7 @@ public class AdminGroupServiceImpl implements AdminGroupService {
             //验证分组名称是否已存在
             boolean isExists = isExistsByGroupName(adminGroupSaveOrUpdateVO.getName());
             if (isExists) {
-                throw new CustomException(ResultCode.IS_EXISTS);
+                throw new CustomException(ResultCode.BUSINESS_NAME_EXISTED);
             }
         }
 
@@ -159,7 +159,7 @@ public class AdminGroupServiceImpl implements AdminGroupService {
 
         if (!CollectionUtils.isEmpty(adminGroupApplicationList)) {
             log.info("### 应用分组已经被应用使用，不能删除, adminGroupId={} ###", id);
-            throw new CustomException(ResultCode.GROUP_NO_ALLOWED_DEL);
+            throw new CustomException(ResultCode.BUSINESS_GROUP_NO_ALLOWED_DEL);
         }
 
         AdminGroup adminGroup = new AdminGroup();
@@ -317,7 +317,7 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         //如果当前分组和最底分组相同
         if (bottomGroup.getId().equals(adminGroupId)) {
             log.info("### 已经是最底端元素, adminGroupId={}###", adminGroupId);
-            throw new CustomException(ResultCode.IS_BOTTOM);
+            throw new CustomException(ResultCode.BUSINESS_IS_BOTTOM);
         }
 
         //置底操作 ，被操作记录 编号是置顶帖子(编号+1)
@@ -348,7 +348,7 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         //如果当前分组和最顶分组相同
         if (topGroup.getId().equals(adminGroupId)) {
             log.info("### 已经是最顶端元素, adminGroupId={}###", adminGroupId);
-            throw new CustomException(ResultCode.IS_TOP);
+            throw new CustomException(ResultCode.BUSINESS_IS_TOP);
         }
 
         //置顶操作 ，被操作记录 编号是置顶帖子(编号-1)
@@ -374,7 +374,7 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         List<AdminGroup> adminGroupList = adminGroupMapper.selectByExample(example);
         if (CollectionUtils.isEmpty(adminGroupList)) {
             log.info("### 已经是最顶端元素, adminGroupId={}###", adminGroupId);
-            throw new CustomException(ResultCode.IS_TOP);
+            throw new CustomException(ResultCode.BUSINESS_IS_TOP);
         }
 
         AdminGroup nextGroup = adminGroupList.get(0);
@@ -409,7 +409,7 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         List<AdminGroup> adminGroupList = adminGroupMapper.selectByExample(example);
         if (CollectionUtils.isEmpty(adminGroupList)) {
             log.info("### 已经是最顶端元素, adminGroupId={}###", adminGroupId);
-            throw new CustomException(ResultCode.IS_TOP);
+            throw new CustomException(ResultCode.BUSINESS_IS_TOP);
         }
 
         AdminGroup prevGroup = adminGroupList.get(0);

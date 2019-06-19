@@ -20,4 +20,6 @@ public interface ApplicationService {
     void add(ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO);
 
     void update(String appId, ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO);
+
+    void updateStatus(String appId, String status);
 }

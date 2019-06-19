@@ -28,7 +28,7 @@ public class UrlUtil {
         try {
             urlObj = new URL(url);
         } catch (MalformedURLException e) {
-            throw new CustomException(ResultCode.ILLEGAL_URL);
+            throw new CustomException(ResultCode.PARAM_IS_INVALID);
         }
         String domain = urlObj.getHost();
         int port = urlObj.getPort();
@@ -46,7 +46,7 @@ public class UrlUtil {
         try {
             urlObj = new URL(url);
         } catch (MalformedURLException e) {
-            throw new CustomException(ResultCode.ILLEGAL_URL);
+            throw new CustomException(ResultCode.PARAM_IS_INVALID);
         }
         String domain = urlObj.getHost();
         int port = urlObj.getPort();

@@ -62,7 +62,7 @@ public class LimitAspect {
             logger.info("第{}次访问key为 {}，描述为 [{}] 的接口", count, keys, limit.name());
             return joinPoint.proceed();
         } else {
-            throw new CustomException(ResultCode.LIMIT);
+            throw new CustomException(ResultCode.PERMISSION_LIMIT);
         }
     }
 

@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
             }
         }
 
-        return new Result(ResultCode.INVALID_PARAM);
+        return new Result(ResultCode.PARAM_IS_INVALID);
     }
 
     /**
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
     public Result handleOtherException(Exception e){
         // 打印异常信息
         log.error("### 不可知的异常:{} ###", e.getMessage());
-        return new Result(ResultCode.SERVER_ERROR);
+        return new Result(ResultCode.SYSTEM_INNER_ERROR);
     }
 
 }
