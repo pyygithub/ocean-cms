@@ -68,7 +68,7 @@ cas:
 
 #cas client add url
 cas-server:
-  client-add-url: http://www.leyou.com/cas/addClient?ipAndPort={ipAndPort}&logoutUrl={logoutUrl}
+  client-add-url: http://10.10.50.189/cas/addClient?ipAndPort={ipAndPort}&logoutUrl={logoutUrl}
 
 login:
   success:

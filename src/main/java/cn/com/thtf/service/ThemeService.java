@@ -25,4 +25,6 @@ public interface ThemeService {
     List<ThemeListVO> listByParam(String themeName);
 
     void updateStatus(String themeId, String status);
+
+    void setDefaultTheme(String themeId);
 }

@@ -4,7 +4,7 @@ package cn.com.thtf.model;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Table(name = "HYJZ_THEME_IMAGE")
+@Table(name = "HYJZ_IMAGE")
 public class Image {
 
   @Id

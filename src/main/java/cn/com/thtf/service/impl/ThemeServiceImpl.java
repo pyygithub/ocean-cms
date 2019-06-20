@@ -86,6 +86,7 @@ public class ThemeServiceImpl implements ThemeService {
         theme.setCreateTime(new Timestamp(new Date().getTime()));
         theme.setStatus(Constants.ENABLE);
         theme.setDeletedFlag(Constants.UN_DELETED);
+        theme.setIsDefault(Constants.THEME_DEFAULT);
         int count = themeMapper.insert(theme);
         if (count != 1) {
             log.error("### 主题添加：添加到数据库错误 ###");
@@ -258,6 +259,34 @@ public class ThemeServiceImpl implements ThemeService {
         int updateCount = themeMapper.updateByPrimaryKeySelective(theme);
         if (updateCount != 1) {
             log.error("### 主题状态修改: 主题记录状态修改失败 ###");
+            throw new CustomException(ResultCode.FAIL);
+        }
+    }
+
+    /**
+     * 设置默认主题
+     * @param themeId
+     */
+    @Override
+    public void setDefaultTheme(String themeId) {
+        //删除系统中原有默认主题
+        Example example = new Example(Theme.class);
+        example.createCriteria().andEqualTo("isDefault", Constants.THEME_DEFAULT);
+
+        Theme theme = new Theme();
+        theme.setIsDefault(Constants.THEME_NO_DEFAULT);
+        theme.setLastUpdateTime(new Timestamp(new Date().getTime()));
+        theme.setLastUpdateUserCode(UserUtil.getUserId());
+        theme.setLastUpdateUserName(UserUtil.getUsername());
+        //执行修改
+        themeMapper.updateByExampleSelective(theme, example);
+
+        //修改当前主题为默认主题
+        theme.setId(themeId);
+        theme.setIsDefault(Constants.THEME_DEFAULT);
+        int updateCount = themeMapper.updateByPrimaryKeySelective(theme);
+        if (updateCount != 1) {
+            log.error("### 设置默认主题: 修改默认主题记录失败 ###");
             throw new CustomException(ResultCode.FAIL);
         }
     }

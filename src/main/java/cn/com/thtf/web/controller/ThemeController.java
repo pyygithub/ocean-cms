@@ -116,4 +116,20 @@ public class ThemeController {
 
         return Result.SUCCESS();
     }
+
+    /**
+     * 默认主题设置
+     * @param themeId
+     * @return
+     */
+    @ApiOperation(value = "默认主题设置", notes = "默认主题设置接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "themeId", value = "主题ID", required = true, dataType = "String", paramType = "path")
+    })
+    @PatchMapping("/theme/{themeId}/$setDefault")
+    public Result setDefaultTheme(@Valid @NotBlank(message = "主题Id不能为空") @PathVariable("themeId") String themeId) {
+        themeService.setDefaultTheme(themeId);
+
+        return Result.SUCCESS();
+    }
 }
