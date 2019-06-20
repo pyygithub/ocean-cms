@@ -1,6 +1,7 @@
 package cn.com.thtf.service.impl;
 
 import cn.com.thtf.common.Constants;
+import cn.com.thtf.common.response.QueryResult;
 import cn.com.thtf.mapper.AdminGroupApplicationMapper;
 import cn.com.thtf.mapper.AdminGroupMapper;
 import cn.com.thtf.common.exception.CustomException;
@@ -17,6 +18,8 @@ import cn.com.thtf.vo.AdminGroupApplicationVO;
 import cn.com.thtf.vo.AdminGroupListVO;
 import cn.com.thtf.vo.AdminGroupSaveOrUpdateVO;
 import cn.com.thtf.common.response.ResultCode;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -120,7 +123,7 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         AdminGroup adminGroupOld = adminGroupMapper.selectOne(adminGroup);
         if (adminGroupOld == null) {
             log.error("### 该用户应用分组不存在，id={} ###", adminGroupId);
-            throw new CustomException(ResultCode.FAIL);
+            throw new CustomException(ResultCode.RESULT_DATA_NONE);
         }
 
         //如果分组名称被修改-执行重复校验
@@ -173,12 +176,14 @@ public class AdminGroupServiceImpl implements AdminGroupService {
 
     /**
      * 查询管理员应用分组列表
+     * @param name
      * @return
      */
     @Override
-    public List<AdminGroupListVO> list() {
+    public List<AdminGroupListVO> listByParam(String name) {
         //根据用户ID查询应用分组列表信息
         Example example = new Example(AdminGroup.class);
+        example.createCriteria().andLike("name", "%" + name + "%");
         //排序
         example.setOrderByClause(" ORDER_NO ASC");
         //执行查询
@@ -194,6 +199,54 @@ public class AdminGroupServiceImpl implements AdminGroupService {
             }).collect(Collectors.toList());
         }
         return adminGroupListVOList;
+    }
+
+    /**
+     * 分页查询应用分组列表
+     * @param name
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public QueryResult<AdminGroupListVO> listPageByParam(String name, Integer page, Integer size) {
+        if (page == null || page < 1) {
+            page = 1;
+        }
+        if (size == null || size < 1) {
+            size = 10;
+        }
+
+        //根据用户ID查询应用分组列表信息
+        Example example = new Example(AdminGroup.class);
+        example.createCriteria().andLike("name", "%" + name + "%");
+        //排序
+        example.setOrderByClause(" ORDER_NO ASC");
+
+        //分页查询
+        PageHelper.startPage(page, size);
+
+        //执行查询
+        List<AdminGroup> adminGroupList = adminGroupMapper.selectByExample(example);
+        //获取分页后数据
+        PageInfo<AdminGroup> pageInfo = new PageInfo<>(adminGroupList);
+
+        //过滤数据
+        List<AdminGroupListVO> adminGroupListVOList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(adminGroupList)) {
+            adminGroupListVOList = adminGroupList.stream().map(adminGroup -> {
+                AdminGroupListVO adminGroupListVO = new AdminGroupListVO();
+                BeanUtils.copyProperties(adminGroup, adminGroupListVO);
+                return adminGroupListVO;
+            }).collect(Collectors.toList());
+        }
+
+        //封装需要返回的实体数据
+        QueryResult queryResult = new QueryResult();
+        queryResult.setTotal(pageInfo.getTotal());
+        queryResult.setList(adminGroupListVOList);
+
+        return queryResult;
     }
 
     /**
@@ -268,6 +321,7 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         }
         log.info("### 用户分组和应用关联关系更新完毕 ###");
     }
+
 
     /**
      * 调整分组顺序

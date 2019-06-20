@@ -2,6 +2,7 @@ package cn.com.thtf.service.impl;
 
 import cn.com.thtf.common.Constants;
 import cn.com.thtf.common.exception.CustomException;
+import cn.com.thtf.common.response.QueryResult;
 import cn.com.thtf.common.response.ResultCode;
 import cn.com.thtf.mapper.*;
 import cn.com.thtf.model.*;
@@ -10,8 +11,12 @@ import cn.com.thtf.utils.RSAUtil;
 import cn.com.thtf.utils.SnowflakeId;
 import cn.com.thtf.utils.UrlUtil;
 import cn.com.thtf.utils.UserUtil;
+import cn.com.thtf.vo.ApplicationListVO;
 import cn.com.thtf.vo.ApplicationSaveOrUpdateVO;
+import cn.com.thtf.vo.ThemeListVO;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiImplicitParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -299,6 +304,93 @@ public class ApplicationServiceImpl implements ApplicationService {
             log.error("### 系统应用状态修改：修改应用状态错误 ###");
             throw new CustomException(ResultCode.FAIL);
         }
+    }
+
+    /**
+     * 系统应用列表查询
+     * @param appName
+     * @return
+     */
+    @Override
+    public List<ApplicationListVO> listByParam(String appName) {
+        //查询条件
+        Example example = new Example(Application.class);
+        example.createCriteria()
+                .andLike("appName", "%" + appName + "%")
+                .andEqualTo("deletedFlag", Constants.UN_DELETED);
+        //排序
+        example.setOrderByClause(" PRIORITY ASC");
+
+        //执行查询
+        List<Application> applicationList = applicationMapper.selectByExample(example);
+
+        List<ApplicationListVO> applicationVOList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(applicationList)) {
+            applicationList.forEach(application -> {
+                ApplicationListVO applicationVO = new ApplicationListVO();
+                BeanUtils.copyProperties(application, applicationVO);
+                applicationVO.setCreateTime(application.getCreateTime().getTime());
+                applicationVO.setLastUpdateTime(application.getLastUpdateTime().getTime());
+
+                applicationVOList.add(applicationVO);
+            });
+        }
+
+        return applicationVOList;
+    }
+
+    /**
+     * 应用列表分页条件查询
+     * @param appName
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public QueryResult<ApplicationListVO> listPageByParam(String appName, Integer page, Integer size) {
+        if (page == null || page < 1) {
+            page = 1;
+        }
+        if (size == null || size < 1) {
+            size = 10;
+        }
+
+        //查询条件
+        Example example = new Example(Application.class);
+        example.createCriteria()
+                .andLike("appName", "%" + appName + "%")
+                .andEqualTo("deletedFlag", Constants.UN_DELETED);
+        //排序
+        example.setOrderByClause(" PRIORITY ASC");
+
+        //分页查询
+        PageHelper.startPage(page, size);
+
+        //执行查询
+        List<Application> applicationList = applicationMapper.selectByExample(example);
+
+        //获取分页后数据
+        PageInfo<Application> pageInfo = new PageInfo<>(applicationList);
+
+        //过滤数据
+        List<ApplicationListVO> applicationVOList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(applicationList)) {
+            applicationList.forEach(application -> {
+                ApplicationListVO applicationVO = new ApplicationListVO();
+                BeanUtils.copyProperties(application, applicationVO);
+                applicationVO.setCreateTime(application.getCreateTime().getTime());
+                applicationVO.setLastUpdateTime(application.getLastUpdateTime().getTime());
+
+                applicationVOList.add(applicationVO);
+            });
+        }
+
+        //封装需要返回的实体数据
+        QueryResult queryResult = new QueryResult();
+        queryResult.setTotal(pageInfo.getTotal());
+        queryResult.setList(applicationVOList);
+
+        return queryResult;
     }
 
     /**

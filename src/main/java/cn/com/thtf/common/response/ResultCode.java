@@ -34,8 +34,12 @@ public enum ResultCode {
 
     /* 业务错误：30001-39999 */
     BUSINESS_GROUP_NO_ALLOWED_DEL(30001, "应用分组已经被应用使用，不能删除"),
-    BUSINESS_IS_TOP(30002, "已经到最顶部"),
-    BUSINESS_IS_BOTTOM(30003, "已经到最底部"),
+    BUSINESS_THEME_NO_ALLOWED_DEL(30002, "主题已经被用户使用，不能删除"),
+    BUSINESS_THEME_NO_ALLOWED_DISABLE(30003, "主题已经被用户使用，不能停用"),
+    BUSINESS_THEME_DEFAULT_NO_ALLOWED_DEL(30004, "默认主题，不能删除"),
+    BUSINESS_THEME_NO_ALLOWED_UPDATE(30005, "主题已经被用户使用，不能修改图片信息"),
+    BUSINESS_IS_TOP(30040, "已经到最顶部"),
+    BUSINESS_IS_BOTTOM(30041, "已经到最底部"),
     BUSINESS_NAME_EXISTED(30051, "名称已存在"),
 
     /* 系统错误：40001-49999 */

@@ -1,6 +1,7 @@
 package cn.com.thtf.web.controller;
 
 import cn.com.thtf.aop.log.Log;
+import cn.com.thtf.common.response.QueryResult;
 import cn.com.thtf.common.response.Result;
 import cn.com.thtf.service.AdminGroupService;
 import cn.com.thtf.vo.AdminGroupApplicationVO;
@@ -39,6 +40,41 @@ public class AdminGroupController {
 
     @Autowired
     private AdminGroupService adminGroupService;
+
+//    /**
+//     * 查询管理员应用分组列表
+//     * @return
+//     */
+//    @ApiOperation(value = "查询管理员应用分组列表查询", notes = "根据管理员ID查询应用分组列表查询接口")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "name", value = "分组名称", required = false, dataType = "String", paramType = "query")
+//    })
+//    @GetMapping("/adminGroups")
+//    public Result list(@RequestParam(value = "name", required = false) String name) {
+//        List<AdminGroupListVO> adminGroupVOList = adminGroupService.listByParam(name);
+//
+//        return Result.SUCCESS(adminGroupVOList);
+//    }
+
+    /**
+     * 分页查询管理员应用分组列表
+     * @return
+     */
+    @ApiOperation(value = "分页查询管理员应用分组列表", notes = "分页查询管理员应用分组列表接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "分组名称", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "page", value = "当前页码", required = true, dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "分页尺寸", required = true, dataType = "Integer", paramType = "query")
+    })
+    @GetMapping("/adminGroups")
+    public Result list(@RequestParam(value = "name", required = false) String name,
+                       @RequestParam("page") Integer page,
+                       @RequestParam("size") Integer size) {
+        QueryResult<AdminGroupListVO> queryResult = adminGroupService.listPageByParam(name, page, size);
+
+        return Result.SUCCESS(queryResult);
+    }
+
 
     /**
      * 管理员应用分组添加
@@ -92,17 +128,6 @@ public class AdminGroupController {
         return Result.SUCCESS();
     }
 
-    /**
-     * 查询管理员应用分组列表
-     * @return
-     */
-    @ApiOperation(value = "查询管理员应用分组列表", notes = "根据管理员ID查询应用分组列表查询接口")
-    @GetMapping("/adminGroups")
-    public Result list() {
-        List<AdminGroupListVO> adminGroupVOList = adminGroupService.list();
-
-        return Result.SUCCESS(adminGroupVOList);
-    }
 
     /**
      * 调整管理员应用分组顺序

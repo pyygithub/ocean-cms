@@ -27,4 +27,7 @@ public interface Constants {
 
     String IMAGE_TYPE_THEME = "theme";//主题图片
     String IMAGE_TYPE_APP = "app";//app图片
+
+    String THEME_DEFAULT = "1";//默认主题
+    String THEME_NO_DEFAULT = "0";//非默认主题
 }

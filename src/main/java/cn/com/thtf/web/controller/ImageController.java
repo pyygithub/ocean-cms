@@ -4,8 +4,8 @@ import cn.com.thtf.common.exception.CustomException;
 import cn.com.thtf.common.response.Result;
 import cn.com.thtf.common.response.ResultCode;
 import cn.com.thtf.config.FtpConfig;
-import cn.com.thtf.model.ThemeImage;
-import cn.com.thtf.service.ThemeImageService;
+import cn.com.thtf.model.Image;
+import cn.com.thtf.service.ImageService;
 import cn.com.thtf.utils.FtpUtil;
 import cn.com.thtf.utils.UploadUtils;
 import io.swagger.annotations.*;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 /**
  * ========================
@@ -34,11 +33,11 @@ import java.io.IOException;
 @Api(value = "ThemeImageController", description = "主题图片相关接口")
 @RestController
 @RequestMapping("/v1")
-public class ThemeImageController {
-    private static final Logger log = LoggerFactory.getLogger(ThemeImageController.class);
+public class ImageController {
+    private static final Logger log = LoggerFactory.getLogger(ImageController.class);
 
     @Autowired
-    private ThemeImageService themeImageService;
+    private ImageService imageService;
 
     @Autowired
     private FtpConfig ftpConfig;
@@ -72,7 +71,7 @@ public class ThemeImageController {
         }
 
         // 添加到数据库
-        ThemeImage themeImage = themeImageService.saveImage(picNewName, picSavePath, httpPath);
-        return Result.SUCCESS(themeImage);
+        Image image = imageService.saveImage(picNewName, picSavePath, httpPath);
+        return Result.SUCCESS(image);
     }
 }

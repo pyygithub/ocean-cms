@@ -1,6 +1,6 @@
 package cn.com.thtf.service;
 
-import cn.com.thtf.model.ThemeImage;
+import cn.com.thtf.model.Image;
 
 /**
  * ========================
@@ -12,7 +12,7 @@ import cn.com.thtf.model.ThemeImage;
  * Version: v1.0
  * ========================
  */
-public interface ThemeImageService {
+public interface ImageService {
 
-    ThemeImage saveImage(String picNewName, String picSavePath, String httpPath);
+    Image saveImage(String picNewName, String picSavePath, String httpPath);
 }

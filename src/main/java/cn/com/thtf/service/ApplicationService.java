@@ -1,7 +1,10 @@
 package cn.com.thtf.service;
 
+import cn.com.thtf.common.response.QueryResult;
 import cn.com.thtf.vo.AdminGroupApplicationVO;
+import cn.com.thtf.vo.ApplicationListVO;
 import cn.com.thtf.vo.ApplicationSaveOrUpdateVO;
+import cn.com.thtf.vo.ThemeListVO;
 
 import java.util.List;
 
@@ -22,4 +25,8 @@ public interface ApplicationService {
     void update(String appId, ApplicationSaveOrUpdateVO applicationSaveOrUpdateVO);
 
     void updateStatus(String appId, String status);
+
+    List<ApplicationListVO> listByParam(String appName);
+
+    QueryResult<ApplicationListVO> listPageByParam(String appName, Integer page, Integer size);
 }

@@ -1,5 +1,6 @@
 package cn.com.thtf.service;
 
+import cn.com.thtf.common.response.QueryResult;
 import cn.com.thtf.vo.AdminGroupApplicationVO;
 import cn.com.thtf.vo.AdminGroupListVO;
 import cn.com.thtf.vo.AdminGroupSaveOrUpdateVO;
@@ -24,11 +25,13 @@ public interface AdminGroupService {
 
     void delete(String id);
 
-    List<AdminGroupListVO> list();
+    List<AdminGroupListVO> listByParam(String name);
 
     void moveOrder(String userGroupId, String type);
 
     List<AdminGroupApplicationVO> listByAdminGroupId(String adminGroupId);
 
     void updateAdminGroupApplication(String adminGroupId, List<String> appIds);
+
+    QueryResult<AdminGroupListVO> listPageByParam(String name, Integer page, Integer size);
 }
