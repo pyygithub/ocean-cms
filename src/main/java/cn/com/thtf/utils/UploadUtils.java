@@ -60,12 +60,12 @@ public class UploadUtils {
         int d1 = hashCode & 0xf;
         // 二级目录
         int d2 = (hashCode >> 4) & 0xf;
-        return "/" + d1 + "/" + d2;
+        return "/" + Integer.toHexString(d1) + "/" + Integer.toHexString(d2);
     }
 
     public static void main(String[] args) {
         System.out.println(generateRandonFileName());
 
-        System.out.println(generateRandomDir("121211.txt"));
+        System.out.println(generateRandomDir("abc.txt"));
     }
 }
