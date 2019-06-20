@@ -14,5 +14,5 @@ import cn.com.thtf.model.ThemeImage;
  */
 public interface ThemeImageService {
 
-    ThemeImage saveImage(String picSavePath, String httpPath);
+    ThemeImage saveImage(String picNewName, String picSavePath, String httpPath);
 }

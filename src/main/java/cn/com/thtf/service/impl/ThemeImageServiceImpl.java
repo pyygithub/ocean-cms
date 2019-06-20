@@ -40,15 +40,16 @@ public class ThemeImageServiceImpl implements ThemeImageService {
 
     /**
      * 保存主题图片
+     * @param picNewName
      * @param picSavePath
      * @param httpPath
      * @return
      */
     @Override
-    public ThemeImage saveImage(String picSavePath, String httpPath) {
+    public ThemeImage saveImage(String picNewName, String picSavePath, String httpPath) {
         ThemeImage themeImage = new ThemeImage();
         themeImage.setId(SnowflakeId.getId() + "");
-        themeImage.setPath(picSavePath);//相对路径
+        themeImage.setPath(picSavePath + "/" + picNewName);//相对路径
         themeImage.setHttpPath(httpPath);//图片访问路径
         themeImage.setUserId(UserUtil.getUserId());
         themeImage.setCreateTime(new Timestamp(new Date().getTime()));

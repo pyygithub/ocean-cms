@@ -45,17 +45,19 @@ public class ThemeImageController {
 
     /**
      * 图片上传
+     *
      * @param file
      * @return
      */
     @ApiOperation(value = "主题图片上传", notes = "主题图片上传")
     @PostMapping(value = "/uploadImage", consumes = "multipart/*", headers = "content-type=multipart/form-data")
-    public Result uploadFiles(@Valid @ApiParam(value = "上传的文件", required = true) @RequestParam("file") MultipartFile file){
+    public Result uploadFiles(@Valid @ApiParam(value = "上传的文件", required = true) @RequestParam("file") MultipartFile file) {
+        String picNewName = null;
         String picSavePath = null;
         String httpPath = null;
         try {
             String oldName = file.getOriginalFilename();// 获取图片原来的名字
-            String picNewName = UploadUtils.generateRandonFileName(oldName);//通过工具类产生新图片名称，防止重名
+            picNewName = UploadUtils.generateRandonFileName(oldName);//通过工具类产生新图片名称，防止重名
             picSavePath = UploadUtils.generateRandomDir(picNewName);//通过工具类把图片目录分级
             httpPath = FtpUtil.pictureUploadByConfig(ftpConfig, picNewName, picSavePath, file.getInputStream());// 上传到图片服务器的操作
             if (httpPath == null) {
@@ -70,7 +72,7 @@ public class ThemeImageController {
         }
 
         // 添加到数据库
-        ThemeImage themeImage = themeImageService.saveImage(picSavePath, httpPath);
+        ThemeImage themeImage = themeImageService.saveImage(picNewName, picSavePath, httpPath);
         return Result.SUCCESS(themeImage);
     }
 }
