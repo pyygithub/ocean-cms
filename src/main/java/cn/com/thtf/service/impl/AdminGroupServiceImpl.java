@@ -70,6 +70,7 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         //验证分组名称是否已存在
         boolean isExists = isExistsByGroupName(adminGroupSaveOrUpdateVO.getName());
         if (isExists) {
+            log.info("### 添加管理员应用分组：当前分组名称已存在, adminGroupName={} ###", adminGroupSaveOrUpdateVO.getName());
             throw new CustomException(ResultCode.BUSINESS_NAME_EXISTED);
         }
 
@@ -84,9 +85,8 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         adminGroup.setCreateUserName(UserUtil.getUsername());
         adminGroup.setCreateTime(new Timestamp(new Date().getTime()));
 
-        //查询当前用户分组序号最大值
+        //查询当前分组序号最大值
         Example example = new Example(AdminGroup.class);
-        example.createCriteria().andEqualTo("ownerCode", UserUtil.getUserId());
         //排序
         example.setOrderByClause(" ORDER_NO DESC");
         //执行查询
@@ -219,7 +219,9 @@ public class AdminGroupServiceImpl implements AdminGroupService {
 
         //根据用户ID查询应用分组列表信息
         Example example = new Example(AdminGroup.class);
-        example.createCriteria().andLike("name", "%" + name + "%");
+        if (StringUtils.isNotBlank(name)) {
+            example.createCriteria().andLike("name", "%" + name + "%");
+        }
         //排序
         example.setOrderByClause(" ORDER_NO ASC");
 
@@ -498,7 +500,6 @@ public class AdminGroupServiceImpl implements AdminGroupService {
         Map<String, Object> result = new HashMap<>();
 
         if (count > 0) {
-            log.info("### 校验分组名称是否已存在：当前分组名称已存在, adminGroupName={} ###", adminGroupName);
             return true;//已存在
         } else {
             return false;//不存在

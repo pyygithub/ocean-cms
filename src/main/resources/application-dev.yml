@@ -52,7 +52,7 @@ spring:
 #日志级别
 logging:
   level:
-    cn.com.thtf.dao: debug
+    cn.com.thtf.mapper: debug
 
 
 #cas config

@@ -46,6 +46,8 @@ public class LogAspect {
         currentTime = System.currentTimeMillis();
         try {
             result = joinPoint.proceed();
+        } catch (CustomException e) {
+            throw new CustomException(e.getResultCode());
         } catch (Throwable e) {
             throw new CustomException(ResultCode.FAIL);
         }
