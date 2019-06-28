@@ -42,7 +42,7 @@ public class UrlFilter implements  Filter {
 		final HttpServletRequest request = (HttpServletRequest) servletRequest;
 		final HttpServletResponse response = (HttpServletResponse) servletResponse;
 		String url = request.getRequestURI();
-		logger.info("请求路径 url = " + url);
+		logger.debug("请求路径 url = " + url);
 		if(!url.contains("login") && !ignorePatternUrl.contains(url) && !url.contains("/out")) {
 			final HttpSession session = request.getSession(false);
 			final Assertion assertion = session != null ? (Assertion) session.getAttribute("_const_cas_assertion_") : null;

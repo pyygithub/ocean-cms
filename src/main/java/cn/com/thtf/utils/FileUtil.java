@@ -3,8 +3,9 @@ package cn.com.thtf.utils;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.UUID;
 
@@ -116,5 +117,22 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
             resultSize = size + "B   ";
         }
         return resultSize;
+    }
+
+    /**
+     * 将BufferedImage转换为InputStream
+     * @param image
+     * @return
+     */
+    public static InputStream bufferedImageToInputStream(BufferedImage image, String suffix){
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, suffix, os);
+            InputStream input = new ByteArrayInputStream(os.toByteArray());
+            return input;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

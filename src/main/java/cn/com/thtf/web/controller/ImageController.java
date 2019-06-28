@@ -30,7 +30,7 @@ import javax.validation.Valid;
  * Version: v1.0
  * ========================
  */
-@Api(value = "ThemeImageController", description = "主题图片相关接口")
+@Api(value = "ImageController", description = "图片相关接口")
 @RestController
 @RequestMapping("/v1")
 public class ImageController {
@@ -39,8 +39,7 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    @Autowired
-    private FtpConfig ftpConfig;
+
 
     /**
      * 图片上传
@@ -51,27 +50,34 @@ public class ImageController {
     @ApiOperation(value = "主题图片上传", notes = "主题图片上传")
     @PostMapping(value = "/uploadImage", consumes = "multipart/*", headers = "content-type=multipart/form-data")
     public Result uploadFiles(@Valid @ApiParam(value = "上传的文件", required = true) @RequestParam("file") MultipartFile file) {
-        String picNewName = null;
-        String picSavePath = null;
-        String httpPath = null;
-        try {
-            String oldName = file.getOriginalFilename();// 获取图片原来的名字
-            picNewName = UploadUtils.generateRandonFileName(oldName);//通过工具类产生新图片名称，防止重名
-            picSavePath = UploadUtils.generateRandomDir(picNewName);//通过工具类把图片目录分级
-            httpPath = FtpUtil.pictureUploadByConfig(ftpConfig, picNewName, picSavePath, file.getInputStream());// 上传到图片服务器的操作
-            if (httpPath == null) {
-                log.error("### 上传到FTP服务器失败 ###");
-                throw new CustomException(ResultCode.FAIL);
-            }
+        Image image = imageService.uploadImage(file);
+        return Result.SUCCESS(image);
+    }
 
-            log.info("### 上传到FTP服务器成功 ###");
-        } catch (Exception e) {
-            log.error("### 图片上传失败，e={}###", e.getMessage());
-            throw new CustomException(ResultCode.FAIL);
-        }
+    /**
+     * 图像切割(按指定起点坐标和宽高切割)
+     *
+     * @param file 源图像文件
+     * @param x 目标切片起点坐标X
+     * @param y 目标切片起点坐标Y
+     * @param width 目标切片宽度
+     * @param height 目标切片高度
+     */
+    @ApiOperation(value = "系统应用列表分页查询", notes = "系统应用列表分页查询接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "x", value = "目标切片起点坐标X", required = true, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "y", value = "目标切片起点坐标Y", required = true, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "width", value = "目标切片宽度", required = true, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "height", value = "目标切片高度", required = true, dataType = "int", paramType = "query")
+    })
+    @PostMapping(value = "/cutImage", consumes = "multipart/*", headers = "content-type=multipart/form-data")
+    public Result cutImage(@Valid @ApiParam(value = "源图像文件", required = true) @RequestParam("file") MultipartFile file,
+                                       @RequestParam int x,
+                                       @RequestParam int y,
+                                       @RequestParam int width,
+                                       @RequestParam int height) {
 
-        // 添加到数据库
-        Image image = imageService.saveImage(picNewName, picSavePath, httpPath);
+        Image image = imageService.cutImage(file, x, y, width, height);
         return Result.SUCCESS(image);
     }
 }

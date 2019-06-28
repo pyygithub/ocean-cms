@@ -1,14 +1,21 @@
 package cn.com.thtf.utils;
 
+import cn.com.thtf.common.exception.CustomException;
+import cn.com.thtf.common.response.ResultCode;
 import cn.com.thtf.config.FtpConfig;
+import cn.com.thtf.vo.UploadFileResult;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ========================
@@ -27,26 +34,26 @@ public class FtpUtil {
     /**
      * 初始化配置
      * @param ftpConfig
-     * @param picNewName
-     * @param picSavePath
+     * @param fileNewName
+     * @param fileSavePath
      * @param inputStream
      * @return
      * @throws IOException
      */
-    public static String pictureUploadByConfig(FtpConfig ftpConfig, String picNewName, String picSavePath,
+    public static String fileUploadByConfig(FtpConfig ftpConfig, String fileNewName, String fileSavePath,
                                                InputStream inputStream) throws IOException {
-        log.info("### pictureUploadByConfig ###");
-        String picHttpPath = null;
+        log.info("### fileUploadByConfig ###");
+        String fileHttpPath = null;
 
         boolean flag = uploadFile(ftpConfig.getFTP_ADDRESS(), ftpConfig.getFTP_PORT(), ftpConfig.getFTP_USERNAME(),
-                ftpConfig.getFTP_PASSWORD(), ftpConfig.getFTP_BASEPATH(), picSavePath, picNewName, inputStream);
+                ftpConfig.getFTP_PASSWORD(), ftpConfig.getFTP_BASEPATH(), fileSavePath, fileNewName, inputStream);
 
         if (!flag) {
-            return picHttpPath;
+            return fileHttpPath;
         }
-        picHttpPath = ftpConfig.getIMAGE_BASE_URL() + picSavePath + "/" + picNewName;
-        log.info("### picHttpPath={} ###", picHttpPath);
-        return picHttpPath;
+        fileHttpPath = ftpConfig.getServerUrl() + fileSavePath + "/" + fileNewName;
+        log.info("### fileHttpPath={} ###", fileHttpPath);
+        return fileHttpPath;
     }
 
     /**
@@ -124,5 +131,70 @@ public class FtpUtil {
             }
         }
         return result;
+    }
+
+    /**
+     *  上传文件到远程ftp服务器
+     * @param ftpConfig
+     * @param file
+     * @return
+     */
+    public static UploadFileResult uploadFileToRemoteServer(FtpConfig ftpConfig, MultipartFile file) {
+        try {
+            String fileNewName = null;  //文件新名称
+            String fileSavePath = null; //文件保持相对路径
+            String httpPath = null;     //文件http绝对路径
+            String oldName = file.getOriginalFilename();// 获取文件原来的名字
+            fileNewName = UploadUtils.generateRandonFileName(oldName);//通过工具类产生新文件名称，防止重名
+            fileSavePath = UploadUtils.generateRandomDir(fileNewName);//通过工具类把文件目录分级
+            httpPath = FtpUtil.fileUploadByConfig(ftpConfig, fileNewName, fileSavePath, file.getInputStream());// 上传到图片服务器的操作
+            if (httpPath == null) {
+                log.error("### 上传文件到FTP服务器失败 ###");
+                throw new CustomException(ResultCode.FAIL);
+            }
+            log.info("### 上传文件到FTP服务器成功 ###");
+
+            UploadFileResult uploadFileResult = new UploadFileResult();
+            uploadFileResult.setFileNewName(fileNewName);
+            uploadFileResult.setFileSavePath(fileSavePath);
+            uploadFileResult.setHttpPath(httpPath);
+            return uploadFileResult;
+        } catch (Exception e) {
+            log.error("### 文件上传失败，e={}###", e.getMessage());
+            throw new CustomException(ResultCode.FAIL);
+        }
+    }
+
+    /**
+     *  上传图片到远程ftp服务器
+     * @param ftpConfig
+     * @param fileInputStream
+     * @param originalFilename
+     * @return
+     */
+    public static UploadFileResult uploadImageToRemoteServer(FtpConfig ftpConfig, InputStream fileInputStream, String originalFilename) {
+        try {
+            String fileNewName = null;  //文件新名称
+            String fileSavePath = null; //文件保持相对路径
+            String httpPath = null;     //文件http绝对路径
+            String oldName = originalFilename;// 获取文件原来的名字
+            fileNewName = UploadUtils.generateRandonFileName(oldName);//通过工具类产生新文件名称，防止重名
+            fileSavePath = UploadUtils.generateRandomDir(fileNewName);//通过工具类把文件目录分级
+            httpPath = FtpUtil.fileUploadByConfig(ftpConfig, fileNewName, fileSavePath, fileInputStream);// 上传到图片服务器的操作
+            if (httpPath == null) {
+                log.error("### 上传文件到FTP服务器失败 ###");
+                throw new CustomException(ResultCode.FAIL);
+            }
+            log.info("### 上传文件到FTP服务器成功 ###");
+
+            UploadFileResult uploadFileResult = new UploadFileResult();
+            uploadFileResult.setFileNewName(fileNewName);
+            uploadFileResult.setFileSavePath(fileSavePath);
+            uploadFileResult.setHttpPath(httpPath);
+            return uploadFileResult;
+        } catch (Exception e) {
+            log.error("### 文件上传失败，e={}###", e.getMessage());
+            throw new CustomException(ResultCode.FAIL);
+        }
     }
 }

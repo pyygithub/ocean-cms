@@ -1,6 +1,7 @@
 package cn.com.thtf.service;
 
 import cn.com.thtf.model.Image;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * ========================
@@ -14,5 +15,7 @@ import cn.com.thtf.model.Image;
  */
 public interface ImageService {
 
-    Image saveImage(String picNewName, String picSavePath, String httpPath);
+    Image uploadImage(MultipartFile file);
+
+    Image cutImage(MultipartFile file, int x, int y, int width, int height);
 }

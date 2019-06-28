@@ -41,16 +41,16 @@ public class FtpConfig {
     private String FTP_PASSWORD;
 
     /**
-     * 基本路径，用户图片 /home/ftptest/tenement/house_images
+     * 基本路径，用户文件 /home/ftptest/tenement/house_images
      */
     @Value("${ftp.basepath}")
     private String FTP_BASEPATH;
 
     /**
-     * 下载地址基础url，这个是配置的图片服务器的地址
+     * 下载地址基础url，这个是配置的文件服务器的地址
      */
     @Value("${ftp.server-url}")
-    private String IMAGE_BASE_URL;
+    private String serverUrl;
 
     public String getFTP_ADDRESS() {
         return FTP_ADDRESS;
@@ -84,14 +84,12 @@ public class FtpConfig {
         FTP_PASSWORD = fTP_PASSWORD;
     }
 
-
-
-    public String getIMAGE_BASE_URL() {
-        return IMAGE_BASE_URL;
+    public String getServerUrl() {
+        return serverUrl;
     }
 
-    public void setIMAGE_BASE_URL(String iMAGE_BASE_URL) {
-        IMAGE_BASE_URL = iMAGE_BASE_URL;
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 
     public String getFTP_BASEPATH() {
