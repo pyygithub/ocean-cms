@@ -22,7 +22,7 @@
         <jedis.version>2.9.0</jedis.version>
         <spring-data-redis.version>2.1.8.RELEASE</spring-data-redis.version>
         <swagger.version>2.7.0</swagger.version>
-        <fastjson.version>1.2.54</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <druid.version>1.1.10</druid.version>
         <commons-pool2.version>2.5.0</commons-pool2.version>
         <oracle.version>11.1.0.6.0</oracle.version>
